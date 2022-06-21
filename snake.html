@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo da Cobrinha</title>
+</head>
+
+<body>
+    <canvas id="stage" width="400" height="400">
+        <!-- <canvas> elemento <canvas> é um container para gráficos, 
+         precisa de js para desenhar os gráficos  -->
+        <script>
+            window.onload = function () {
+                var stage = document.getElementById('stage');
+                var ctx = stage.getContext("2d");
+                document.addEventListener("keydown", keyPush)// Espera por um evento, td vez q esse evento acontecer ele faz alguma coisa
+                // Dispara a função push cada vez q uma tecla, do keyPush, for pressionada 
+
+
+                setInterval(game, 60); // a cada x milissegundos a função game é chamada
+
+
+                const vel = 1; // deslocamento da cobra
+
+                var vx = vy = 0;
+                var px = 10;
+                var py = 15; // Começa no ponto (10,15)
+                var tp = 20; // tamanho da casa 20x20
+                var qp = 20; // quantidade de casas
+                var ax = ay = 15; // posição da maçã
+
+                var trail = []; // rastro
+                tail = 5;
+
+                function game() {
+                    px += vx;
+                    py += vy;
+
+                    // Qnd chegar no limite do tabuleiro
+                    if (px < 0) {
+                        px = qp - 1;
+                    }
+                    if (px > qp - 1) {
+                        px = 0;
+                    }
+                    if (py < 0) {
+                        py = qp - 1;
+                    }
+                    if (py > qp - 1) {
+                        py = 0;
+                    }
+
+
+
+                    ctx.fillStyle = "black"; // Tabuleiro
+                    ctx.fillRect(0, 0, stage.width, stage.height); // print do estágio
+                    // começa no início(0,0) e printa td o estágio
+
+                    ctx.fillStyle = "Red" // Maçã
+                    ctx.fillRect(ax * tp, ay * tp, tp, tp);
+                    // ax*tamanho da casa, ay*tamanho da casa
+
+                    ctx.fillStyle = "Gray" // Cobra
+                    for (var i = 0; i < trail.length; i++) {
+                        // Verificar para ver se o rastro bateu ou não
+
+                        ctx.fillRect(trail[i].x * tp, trail[i].y * tp, tp-1, tp-1);
+                        if (trail[i].x == px && trail[i].y == py) {
+                            // algum elemento do rastro == posição da cabeça
+                            vx = vy = 0;
+                            // Parar a cobra / Game Over
+                            tail = 5 // Volta pro tamanho inicial
+                        }
+                    }
+
+                    trail.push({ x: px, y: py })// Criando objeto, elemento y = x = posição atual, 
+                    //insere isso no array de rastor para que no próprio ciclo desenhe o rastro na tela 
+                    while (trail.length > tail) {
+                        trail.shift();
+                        // remove o primeiro elemento da array se o trail for maior que a cauda
+                    }
+
+                    if (ax == px && ay == py) { // Aumentar a cauda
+                        tail++;
+                        ax = Math.floor(Math.random() * qp);
+                        ay = Math.floor(Math.random() * qp);
+                        // Reposiciona a maçã
+                    }
+                }
+
+                function keyPush(event) {
+                    switch (event.keyCode) { // Verifica o código do evento, qual a tecla foi pressionada
+                        case 37: // tecla 37 = Left
+                            vx = -vel;
+                            vy = 0;
+                            console.log("Left");
+                            break;
+                        case 38: // tecla 38 = Up
+                            vx = 0;
+                            vy = -vel;
+                            console.log("Up");
+                            break;
+                        case 39: // tecla 39 = Right
+                            vx = vel;
+                            vy = 0;
+                            console.log("Right");
+                            break;
+                        case 40: // tecla 40 = Down
+                            vx = 0;
+                            vy = vel;
+                            console.log("Down")
+                            break;
+                    }
+                }
+            }
+        </script>
+
+    </canvas>
+</body>
+
+</html>
